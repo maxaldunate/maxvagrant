@@ -14,45 +14,56 @@ Vagrant.configure(2) do |config|
   # boxes at https://atlas.hashicorp.com/search.
   #config.vm.box = "precise64"
   #config.vm.box_url = "http://files.vagrantup.com/precise64.box"
-  config.ssh.username = 'root'
-  config.ssh.password = 'vagrant'
-  config.ssh.insert_key = 'true'
 
-   # Setup for puppetmaster
-   config.vm.define "puppetmaster" do |pm|
-      pm.vm.hostname = "puppetmaster"
-      pm.vm.box = "puppetlabs/centos-6.6-64-puppet"
-      pm.vm.network "private_network", type: "dhcp"
-      pm.vm.network "forwarded_port", guest: 80, host: 8080
-      #pm.vm.provision "puppet" do |puppet|
-      #   puppet.manifests_path = "manifests"
-      #   puppet.manifest_file = "default.pp"
-      #end
-   end
+  #config.ssh.username = 'root'
+  #config.ssh.password = 'vagrant'
+  #config.ssh.insert_key = 'true'
 
-   #setup for puppet ubuntu agent
-   config.vm.define "ubagent" do |ubagent|
-      ubagent.vm.hostname = "ubuntuagent"
-      ubagent.vm.box = "precise64"
-      ubagent.vm.network "private_network", type: "dhcp"
-   end
+  # Setup for ppupet agent centos6 from puppetslabs
+  config.vm.define "ppupet.agent.centos6" do |pa1|
+    pa1.vm.hostname = "ppupet.agent.centos6"
+    pa1.vm.box = "puppetlabs/centos-6.6-64-puppet"
+    pa1.vm.box_version = "1.0.1"
+    pa1.vm.network "private_network", type: "dhcp"
+    pa1.vm.synced_folder "sharedfolder", "/media/sharedfolder"
+
+    pa1.vm.provision "puppet" do |puppet|
+      #puppet.manifests_path = "puppet/manifests"
+      puppet.module_path = "puppet/modules"
+      #puppet.options = ['--verbose']
+
+      #puppet.environment_path = "environments"
+      #puppet.environment = "testenv"
+
+      #puppet.manifests_path = "manifests"
+      #puppet.manifest_file = "ppagCentos6.pp"
+    end
+
+  end
+
+#  #setup for ppupet agent ubuntu from ubuntu/precise64 - Official Ubuntu Server 12.04
+#  config.vm.define "ppagUbPrecise64" do |pa2|
+#    pa2.vm.hostname = "ppagUbPrecise64"
+#    pa2.vm.box = "precise64"
+#    pa2.vm.network "private_network", type: "dhcp"
+#    pa2.vm.network "public_network", ip: "192.168.242.302"
+#    pa2.vm.synced_folder "sharedfolder", "/media/sharedfolder"
+#  end
+   
+#  #setup for ppupet agent centos7 from centos/7 - CentOS Linux 7 / x86_64 
+#  config.vm.define "ppagCentos7" do |pa3|
+#    pa3.vm.hostname = "ppagCentos7"
+#    pa3.vm.box = "centos/7"
+#    pa3.vm.network "private_network", type: "dhcp"
+#	pa3.vm.network "public_network", ip: "192.168.242.303"
+#	pa3.vm.synced_folder "sharedfolder", "/media/sharedfolder"
+#  end
+   
 end
 
-  # The most common configuration options are documented and commented below.
-  # For a complete reference, please see the online documentation at
-  # https://docs.vagrantup.com.
 
-  # Every Vagrant development environment requires a box. You can search for
   # boxes at https://atlas.hashicorp.com/search.
-##config.vm.box = "puppetmaster"
-
-  # The url from where the 'config.vm.box' box will be fetched if it
-  # doesn't already exist on the user's system.
-##config.vm.box_url = "puppetlabs/centos-6.6-64-puppet"
-
-  # Create a forwarded port mapping which allows access to a specific port
-  # within the machine from a port on the host machine. In the example below,
-  # accessing "localhost:8080" will access port 80 on the guest machine.
+  #config.vm.box_url = "puppetlabs/centos-6.6-64-puppet"
   # config.vm.network "forwarded_port", guest: 80, host: 8080
 
   # Create a private network, which allows host-only access to the machine
